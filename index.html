@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>One-Click Revenue OS</title>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --paper: #fffdfa;
+      --ink: #1f2937;
+      --muted: #5f6b7a;
+      --line: #d9cfbf;
+      --accent: #0f766e;
+      --accent-2: #14532d;
+      --hot: #b45309;
+      --ok: #166534;
+      --radius: 14px;
+      --shadow: 0 12px 36px rgba(40, 24, 0, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 10%, #fff6dd 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, #ddece8 0%, transparent 35%),
+        var(--bg);
+      line-height: 1.45;
+    }
+
+    .wrap {
+      width: min(1120px, 92vw);
+      margin: 0 auto;
+      padding: 26px 0 80px;
+    }
+
+    .hero {
+      background: linear-gradient(125deg, #fff8ec, #f6fcfa);
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 22px;
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 12px;
+      line-height: 1.12;
+    }
+
+    h1 {
+      font-size: clamp(1.9rem, 2.8vw, 2.9rem);
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: clamp(1.25rem, 2vw, 1.8rem);
+      margin-top: 16px;
+    }
+
+    p {
+      margin: 0 0 12px;
+      color: var(--muted);
+    }
+
+    .pill {
+      display: inline-block;
+      border: 1px solid #cde9e4;
+      background: #edfaf7;
+      color: #134e4a;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 6px 16px rgba(30, 41, 59, 0.05);
+    }
+
+    .card h3 {
+      font-size: 1.03rem;
+    }
+
+    .card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #324152;
+    }
+
+    .card li {
+      margin-bottom: 6px;
+    }
+
+    .steps {
+      counter-reset: item;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .steps li {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fffdf8;
+      padding: 12px 14px 12px 46px;
+      position: relative;
+      color: #314358;
+    }
+
+    .steps li::before {
+      counter-increment: item;
+      content: counter(item);
+      position: absolute;
+      left: 12px;
+      top: 11px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 0.8rem;
+      color: #fff;
+      background: linear-gradient(140deg, var(--accent), var(--accent-2));
+      font-weight: 700;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      border-radius: 12px;
+      overflow: hidden;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid #e8dece;
+      padding: 10px 12px;
+    }
+
+    th {
+      background: #f7efe3;
+      font-size: 0.86rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #4f4a38;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .hot {
+      color: var(--hot);
+      font-weight: 700;
+    }
+
+    .ok {
+      color: var(--ok);
+      font-weight: 700;
+    }
+
+    .cta {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(120deg, #0f766e, #0b4f48);
+      color: #fff;
+      padding: 11px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+    }
+
+    button:hover {
+      filter: brightness(1.06);
+    }
+
+    .log {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9rem;
+      color: #153a37;
+      background: #e6faf6;
+      border: 1px solid #b4e6de;
+      border-radius: 10px;
+      padding: 8px 10px;
+      min-height: 38px;
+    }
+
+    .foot {
+      margin-top: 14px;
+      font-size: 0.86rem;
+      color: #5a6372;
+    }
+
+    @media (max-width: 920px) {
+      .grid-3, .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      th, td {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <span class="pill">Merged Product Blueprint</span>
+      <h1>Ribh x K x Attintave: One-Click Growth Site</h1>
+      <p><span class="hot">Outcome promise:</span> one click and the revenue engine goes live so money can start flowing from the best matching channel immediately.</p>
+      <p>This site merges all core capabilities from Ribh one-click execution, K automatic marketing, and Attintave AI personalization without deleting any feature depth.</p>
+      <div class="cta">
+        <button id="run-engine">Launch Ribh One-Click Engine</button>
+        <div class="log" id="engine-log">Idle: waiting for one-click launch.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>What Is the Outcome?</h2>
+      <div class="grid grid-3">
+        <article class="card">
+          <h3>Ribh Promised Outcome (One Click)</h3>
+          <ul>
+            <li>One click to launch the full system and start capturing revenue opportunities instantly.</li>
+            <li>No long setup path before activation: data, channels, and journeys initialize automatically.</li>
+            <li>Operator sees cashflow actions fast, then tunes advanced controls only if needed.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>K Promised Outcome (Automatic Marketing)</h3>
+          <ul>
+            <li>Automatic lifecycle marketing across email, SMS, WhatsApp, push, and service.</li>
+            <li>Right message to the right user at the right moment through flow automation.</li>
+            <li>Unified data + channel orchestration + measurement for repeatable growth.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Attintave Promised Outcome (AI Personalized)</h3>
+          <ul>
+            <li>1:1 personalization at scale across SMS, RCS, email, and push with AI decisioning.</li>
+            <li>AI audience expansion, AI send timing, AI content, and compliant identity growth.</li>
+            <li>More revenue per send through tailored journeys and conversational conversion.</li>
+          </ul>
+        </article>
+      </div>
+      <p class="foot"><span class="ok">Unified merged outcome:</span> Ribh speed + K automation + Attintave personalization = immediate activation and compounding lifecycle revenue.</p>
+    </section>
+
+    <section class="card">
+      <h2>What Is the Structure (First Principles)?</h2>
+      <ol class="steps">
+        <li><strong>Data Foundation:</strong> ingest commerce, behavior, product, app, service, and warehouse signals into a single profile graph.</li>
+        <li><strong>Identity + Consent:</strong> identify visitors and capture legal permissions per channel for marketing and transactional communication.</li>
+        <li><strong>Decision Intelligence:</strong> predict user intent/value, choose audience/channel/timing, and rank offers for conversion probability.</li>
+        <li><strong>AI Creative System:</strong> generate on-brand campaigns and journey content from brand voice, product feed, and live context.</li>
+        <li><strong>Journey Orchestration:</strong> run automated cross-channel flows for all lifecycle moments with fallback and frequency controls.</li>
+        <li><strong>Conversion + Service Layer:</strong> close sales via assisted messaging, commerce triggers, and service-aware upsell moments.</li>
+        <li><strong>Measurement + Learning Loop:</strong> combine attribution and incrementality, then feed outcomes back into targeting models.</li>
+        <li><strong>Ribh One-Click Control:</strong> launch everything with one click while preserving expert controls under advanced mode.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>What Tools and Methods Get the Outcome?</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Principle</th>
+            <th>Tools (Ribh + K + Attintave, merged)</th>
+            <th>Method</th>
+            <th>Outcome</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Data</td>
+            <td>K data platform + 350+ integrations, Attintave integrations/events APIs/Snowflake sync, Ribh one-click connector packs</td>
+            <td>One-click ingestion bootstrap plus real-time event/profile sync and warehouse loopback</td>
+            <td>Single source of truth for targeting and automation</td>
+          </tr>
+          <tr>
+            <td>Identity + Consent</td>
+            <td>Attintave two-tap and AI Grow/Identity AI, K subscription/consent APIs, Ribh consent autopilot checks</td>
+            <td>Adaptive sign-up capture and explicit consent ledger for each channel before activation</td>
+            <td>Bigger reachable audience with lower legal risk</td>
+          </tr>
+          <tr>
+            <td>AI Targeting</td>
+            <td>Attintave Audiences AI, K predictive analytics + channel affinity, Ribh intent routing model</td>
+            <td>Predict purchase propensity and auto-select audience/channel sequence</td>
+            <td>Higher conversion and better spend efficiency</td>
+          </tr>
+          <tr>
+            <td>AI Timing</td>
+            <td>Attintave Send Time AI + K Personalized Send Time + Ribh adaptive trigger clock</td>
+            <td>Per-user delivery timing based on history, channel response curves, and recency windows</td>
+            <td>More opens, clicks, and purchases per send</td>
+          </tr>
+          <tr>
+            <td>Content</td>
+            <td>Attintave Brand Voice AI + AI Pro generation, K campaign blocks, Ribh generative template engine</td>
+            <td>Keep all template capabilities but collapse 350+ manual templates into AI-generated templates with editable fallback library</td>
+            <td>Faster production without losing personalization</td>
+          </tr>
+          <tr>
+            <td>Orchestration</td>
+            <td>K flows/campaigns, Attintave AI Journeys, Ribh one-click lifecycle recipes, SDK/app triggers</td>
+            <td>Trigger-based orchestration for welcome, abandon, post-purchase, winback, loyalty, and service journeys</td>
+            <td>Always-on revenue capture across the customer lifecycle</td>
+          </tr>
+          <tr>
+            <td>Channels</td>
+            <td>Email, SMS, MMS, RCS, push, WhatsApp, service chat, live/AI concierge handoff</td>
+            <td>Single composer with channel rendering rules and automatic channel fallback</td>
+            <td>Right message in the highest-performing channel</td>
+          </tr>
+          <tr>
+            <td>Service + Commerce</td>
+            <td>K customer/service hub signals, Attintave concierge + catalog APIs, Ribh cashflow triggers</td>
+            <td>Blend support events with commerce triggers such as price drop, back in stock, and low inventory urgency</td>
+            <td>Higher post-purchase retention and assisted conversion</td>
+          </tr>
+          <tr>
+            <td>Measurement</td>
+            <td>K attribution model controls, Attintave performance dashboards, Ribh incrementality + holdout engine</td>
+            <td>Display attributed and incremental lift side by side, then auto-feed results into model tuning</td>
+            <td>Trusted reporting and tighter optimization loops</td>
+          </tr>
+          <tr>
+            <td>Operator Simplicity</td>
+            <td class="ok">Ribh One-Click Launch + K automation controls + Attintave AI controls</td>
+            <td>One click runs the full stack; advanced panel exposes every preserved setting for expert teams</td>
+            <td class="ok">Immediate activation with enterprise depth retained</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Feature Merge Rules (No Feature Deletion)</h2>
+      <div class="grid grid-2">
+        <article class="card">
+          <h3>How Features Are Simplified</h3>
+          <ul>
+            <li><strong>350+ templates</strong> -> one AI generative template system plus full manual template access.</li>
+            <li><strong>Many audience builders</strong> -> one merged AI audience graph with advanced rule overrides.</li>
+            <li><strong>Separate timing engines</strong> -> one unified adaptive send-time layer using all timing signals.</li>
+            <li><strong>Many signup formats</strong> -> one adaptive capture framework (popup, inline, two-tap, checkout, app).</li>
+            <li><strong>Complex setup flows</strong> -> one-click launch wizard with optional deep configuration mode.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>What Is Preserved (All Three)</h3>
+          <ul>
+            <li>All channels: email, SMS/MMS, RCS, push, WhatsApp, service messaging.</li>
+            <li>All data paths: integrations, APIs, web/app events, warehouse sync.</li>
+            <li>All control depth: compliance controls, attribution controls, flow logic, rate/frequency safeguards.</li>
+            <li>All operating modes: Ribh one-click for speed and advanced mode for expert teams.</li>
+            <li>All high-value AI: identity AI, audience AI, send-time AI, brand voice AI, and predictive lifecycle AI.</li>
+          </ul>
+        </article>
+      </div>
+      <p class="foot">Core promise: keep every high-value feature from the three systems, compress the operational complexity, and maximize time-to-revenue.</p>
+    </section>
+
+    <section class="card">
+      <h2>Project Breakdown (So We Can Continue in Next Prompts)</h2>
+      <ol class="steps">
+        <li><strong>Phase 1 - Strategy Site:</strong> outcomes, first-principles architecture, full feature merge map (completed on this page).</li>
+        <li><strong>Phase 2 - Product UI:</strong> build dashboard pages (one-click launch, journeys, AI studio, reporting, compliance center).</li>
+        <li><strong>Phase 3 - Interactive Data:</strong> connect sample data and simulate revenue flows by channel and journey.</li>
+        <li><strong>Phase 4 - Technical Blueprint:</strong> API contracts, event schema, model layer, and system design docs.</li>
+      </ol>
+    </section>
+  </div>
+
+  <script>
+    const runButton = document.getElementById("run-engine");
+    const log = document.getElementById("engine-log");
+
+    const stages = [
+      "1/7 Ribh one-click boot: connecting store, channels, and data sources...",
+      "2/7 K automation layer: building lifecycle flows and campaign logic...",
+      "3/7 Attintave AI layer: selecting audiences, channel mix, and send times...",
+      "4/7 Consent + compliance: validating opt-ins and legal messaging paths...",
+      "5/7 Generative content: creating brand-fit messages and journey variants...",
+      "6/7 Cross-channel launch: email, SMS, RCS, push, WhatsApp, and service...",
+      "7/7 Measurement loop: attribution + incrementality optimization now running..."
+    ];
+
+    runButton.addEventListener("click", () => {
+      let i = 0;
+      log.textContent = stages[i];
+      runButton.disabled = true;
+
+      const timer = setInterval(() => {
+        i += 1;
+        if (i < stages.length) {
+          log.textContent = stages[i];
+        } else {
+          clearInterval(timer);
+          log.textContent = "Ribh x K x Attintave engine live: one click is active and revenue optimization is running.";
+          runButton.disabled = false;
+        }
+      }, 680);
+    });
+  </script>
+</body>
+</html>
