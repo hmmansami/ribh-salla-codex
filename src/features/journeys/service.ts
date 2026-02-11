@@ -88,14 +88,17 @@ export function getJourneys(storeId: string) {
 
 export function toggleJourney(params: { storeId: string; journeyId: string; enabled: boolean }) {
   const journeys = getJourneys(params.storeId);
-  const updated = journeys.map((journey) =>
-    journey.id === params.journeyId
-      ? {
-          ...journey,
-          status: params.enabled ? "active" : "paused"
-        }
-      : journey
-  );
+  const updated: Journey[] = journeys.map((journey): Journey => {
+    if (journey.id !== params.journeyId) {
+      return journey;
+    }
+
+    const nextStatus: Journey["status"] = params.enabled ? "active" : "paused";
+    return {
+      ...journey,
+      status: nextStatus
+    };
+  });
 
   memoryDb.journeys.set(params.storeId, updated);
   return updated.find((journey) => journey.id === params.journeyId) ?? null;
