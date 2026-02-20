@@ -10,3 +10,6 @@ test-results
 .DS_Store
 
 .ai_orchestrator/runs
+
+__pycache__/
+*.pyc
