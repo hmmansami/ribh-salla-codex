@@ -1,11 +1,14 @@
 import crypto from "node:crypto";
 import { ensureStore } from "@/features/salla/service";
+import { ensureAccount, getInstallContext } from "@/features/klaviyo/service";
 import { ensureBaselineJourneys } from "@/features/journeys/service";
 import { sendThroughChannel } from "@/lib/providers";
-import type { Channel } from "@/lib/types/domain";
+import type { Channel, ConnectorId } from "@/lib/types/domain";
 
-type LaunchInput = {
-  storeId: string;
+export type LaunchInput = {
+  connector?: ConnectorId;
+  storeId?: string;
+  accountId?: string;
   channels: Channel[];
   locale: "ar" | "en";
   guardrails: {
@@ -14,12 +17,52 @@ type LaunchInput = {
   };
 };
 
+type ResolvedLaunchContext = {
+  connector: ConnectorId;
+  externalId: string;
+  journeyScopeId: string;
+  demoMode: boolean;
+};
+
 function runId() {
   return `run_${crypto.randomBytes(5).toString("hex")}`;
 }
 
-export async function runLaunchEngine(input: LaunchInput) {
+function resolveLaunchContext(input: LaunchInput): ResolvedLaunchContext {
+  const connector = input.connector ?? "salla";
+
+  if (connector === "klaviyo") {
+    const canonicalAccountId = input.accountId ?? input.storeId;
+    if (!canonicalAccountId) {
+      throw new Error("accountId or storeId is required for klaviyo connector.");
+    }
+
+    ensureAccount(canonicalAccountId);
+    const installContext = getInstallContext(canonicalAccountId);
+
+    return {
+      connector,
+      externalId: canonicalAccountId,
+      journeyScopeId: canonicalAccountId,
+      demoMode: installContext.demoMode
+    };
+  }
+
+  if (!input.storeId) {
+    throw new Error("storeId is required for salla connector.");
+  }
+
   ensureStore(input.storeId);
+  return {
+    connector,
+    externalId: input.storeId,
+    journeyScopeId: input.storeId,
+    demoMode: false
+  };
+}
+
+export async function runLaunchEngine(input: LaunchInput) {
+  const context = resolveLaunchContext(input);
 
   const stages = [
     {
@@ -45,16 +88,17 @@ export async function runLaunchEngine(input: LaunchInput) {
   ];
 
   const journeys = ensureBaselineJourneys({
-    storeId: input.storeId,
+    storeId: context.journeyScopeId,
     locale: input.locale,
-    channels: input.channels
+    channels: input.channels,
+    connector: context.connector
   });
 
   // Fire a provider path check so each enabled channel has a real send execution path.
   await Promise.all(
     input.channels.map((channel) =>
       sendThroughChannel({
-        storeId: input.storeId,
+        storeId: context.journeyScopeId,
         channel,
         recipient: channel === "email" ? "customer@example.com" : "+966500000000",
         content: {
@@ -67,7 +111,12 @@ export async function runLaunchEngine(input: LaunchInput) {
 
   return {
     runId: runId(),
-    storeId: input.storeId,
+    storeId: context.journeyScopeId,
+    execution: {
+      connector: context.connector,
+      externalId: context.externalId,
+      demoMode: context.demoMode
+    },
     stages,
     activatedJourneys: journeys.map((journey) => ({
       id: journey.id,

@@ -1,12 +1,46 @@
+export type ConnectorId = "salla" | "klaviyo";
+export type BenchmarkScenario = "core3";
+export type BenchmarkKpiName =
+  | "flow_enablement_rate"
+  | "time_to_first_campaign_minutes"
+  | "predicted_recovery_rate"
+  | "predicted_revenue_per_contact";
+
 export type Channel = "email" | "sms" | "whatsapp";
 export type JourneyStatus = "active" | "paused";
+
+export type ConnectorInstallStatus = "pending" | "installed" | "disconnected";
+
+export type ConnectorInstallContext = {
+  connector: ConnectorId;
+  externalId: string;
+  locale: "ar" | "en";
+  timezone: string;
+  installStatus: ConnectorInstallStatus;
+  demoMode: boolean;
+};
+
+export type ConnectorAuthContext = {
+  connector: ConnectorId;
+  externalId: string;
+  authenticatedAt: string;
+  demoMode: boolean;
+};
+
+export type ConnectorSyncContext = {
+  connector: ConnectorId;
+  externalId: string;
+  checkpoint?: string;
+  syncedAt: string;
+  demoMode: boolean;
+};
 
 export type SallaStore = {
   id: string;
   domain: string;
   locale: "ar" | "en";
   currency: "SAR" | "USD";
-  installStatus: "pending" | "installed" | "disconnected";
+  installStatus: ConnectorInstallStatus;
   timezone: string;
 };
 
@@ -16,6 +50,22 @@ export type SallaTokenSet = {
   expiresAt: string;
   tokenType: string;
   scope: string;
+};
+
+export type KlaviyoAccount = {
+  id: string;
+  accountName: string;
+  locale: "ar" | "en";
+  currency: "SAR" | "USD";
+  installStatus: ConnectorInstallStatus;
+  timezone: string;
+};
+
+export type KlaviyoTokenSet = {
+  apiKey: string;
+  privateKey?: string;
+  expiresAt?: string;
+  scope?: string;
 };
 
 export type WebhookEvent = {
@@ -72,6 +122,21 @@ export type IncrementalitySnapshot = {
   upliftPercent: number;
   confidence: number;
   estimatedIncrementalRevenue: number;
+};
+
+export type BenchmarkKpi = {
+  name: BenchmarkKpiName;
+  value: number;
+  baseline: number;
+  pass: boolean;
+};
+
+export type BenchmarkEvaluation = {
+  connector: ConnectorId;
+  scenario: BenchmarkScenario;
+  kpis: BenchmarkKpi[];
+  overallPass: boolean;
+  evaluatedAt: string;
 };
 
 export type BillingStatus = {

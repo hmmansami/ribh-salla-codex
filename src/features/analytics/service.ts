@@ -1,11 +1,12 @@
 import { getJourneys } from "@/features/journeys/service";
+import type { ConnectorId } from "@/lib/types/domain";
 
 function baseNumberFromStoreId(storeId: string) {
   return storeId.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
 }
 
-export function getAnalyticsOverview(storeId: string) {
-  const journeys = getJourneys(storeId);
+export function getAnalyticsOverview(storeId: string, connector: ConnectorId = "salla") {
+  const journeys = getJourneys(storeId, connector);
   const base = baseNumberFromStoreId(storeId);
   const activeMultiplier = Math.max(1, journeys.filter((j) => j.status === "active").length);
 

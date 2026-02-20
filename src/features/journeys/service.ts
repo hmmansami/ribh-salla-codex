@@ -1,6 +1,7 @@
 import { memoryDb } from "@/lib/store/memory";
-import type { Channel, Journey } from "@/lib/types/domain";
+import type { Channel, ConnectorId, Journey } from "@/lib/types/domain";
 import { ensureStore } from "@/features/salla/service";
+import { ensureAccount } from "@/features/klaviyo/service";
 
 function baselineJourneys(locale: "ar" | "en", channels: Channel[]): Journey[] {
   const names = locale === "ar"
@@ -65,12 +66,24 @@ function baselineJourneys(locale: "ar" | "en", channels: Channel[]): Journey[] {
   ];
 }
 
+function ensureJourneyOwner(connector: ConnectorId, externalId: string) {
+  if (connector === "klaviyo") {
+    ensureAccount(externalId);
+    return;
+  }
+
+  ensureStore(externalId);
+}
+
 export function ensureBaselineJourneys(params: {
   storeId: string;
   locale: "ar" | "en";
   channels: Channel[];
+  connector?: ConnectorId;
 }) {
-  ensureStore(params.storeId);
+  const connector = params.connector ?? "salla";
+  ensureJourneyOwner(connector, params.storeId);
+
   const existing = memoryDb.journeys.get(params.storeId);
   if (existing && existing.length > 0) {
     return existing;
@@ -81,13 +94,15 @@ export function ensureBaselineJourneys(params: {
   return seeded;
 }
 
-export function getJourneys(storeId: string) {
-  ensureStore(storeId);
+export function getJourneys(storeId: string, connector: ConnectorId = "salla") {
+  ensureJourneyOwner(connector, storeId);
   return memoryDb.journeys.get(storeId) ?? [];
 }
 
-export function toggleJourney(params: { storeId: string; journeyId: string; enabled: boolean }) {
-  const journeys = getJourneys(params.storeId);
+export function toggleJourney(params: { storeId: string; journeyId: string; enabled: boolean; connector?: ConnectorId }) {
+  const connector = params.connector ?? "salla";
+  const journeys = getJourneys(params.storeId, connector);
+
   const updated: Journey[] = journeys.map((journey): Journey => {
     if (journey.id !== params.journeyId) {
       return journey;

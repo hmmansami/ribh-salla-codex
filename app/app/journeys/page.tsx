@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import {
+  readStoredConnectorState,
+  writeStoredConnectorState
+} from "@/lib/connectors/client-state";
+import type { ConnectorId } from "@/lib/types/domain";
 import { useLocale } from "@/components/locale-provider";
 
 type Journey = {
@@ -13,41 +18,80 @@ type Journey = {
   revenueImpact: number;
 };
 
-const FALLBACK_STORE = "demo-salla-store";
+function connectorIdentity(connector: ConnectorId, externalId: string) {
+  if (connector === "klaviyo") {
+    return {
+      accountId: externalId,
+      connector
+    };
+  }
+
+  return {
+    storeId: externalId,
+    connector
+  };
+}
 
 export default function JourneysPage() {
-  const { locale } = useLocale();
+  const { locale, dict } = useLocale();
   const isAr = locale === "ar";
+  const [connector, setConnector] = useState<ConnectorId>("salla");
+  const [externalId, setExternalId] = useState("demo-salla-store");
   const [journeys, setJourneys] = useState<Journey[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const storeId = typeof window !== "undefined" ? window.localStorage.getItem("ribh_store_id") || FALLBACK_STORE : FALLBACK_STORE;
+  useEffect(() => {
+    const stored = readStoredConnectorState();
+    setConnector(stored.connector);
+    setExternalId(stored.externalId);
+  }, []);
 
-  async function loadJourneys() {
+  const loadJourneys = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/journeys?storeId=${encodeURIComponent(storeId)}`);
+      const query =
+        connector === "klaviyo"
+          ? `connector=klaviyo&accountId=${encodeURIComponent(externalId)}`
+          : `connector=salla&storeId=${encodeURIComponent(externalId)}`;
+
+      const res = await fetch(`/api/journeys?${query}`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to load journeys");
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to load journeys");
+      }
+
+      const resolvedConnector = (data.connector ?? connector) as ConnectorId;
+      const resolvedExternalId = data.accountId ?? data.storeId ?? externalId;
+
+      setConnector(resolvedConnector);
+      setExternalId(resolvedExternalId);
       setJourneys(data.journeys);
+      writeStoredConnectorState({
+        connector: resolvedConnector,
+        externalId: resolvedExternalId,
+        demoMode: readStoredConnectorState().demoMode
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
-  }
+  }, [connector, externalId]);
 
   useEffect(() => {
     void loadJourneys();
-  }, []);
+  }, [loadJourneys]);
 
   async function toggleJourney(id: string, enabled: boolean) {
     const res = await fetch(`/api/journeys/${id}/toggle`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ storeId, enabled })
+      body: JSON.stringify({
+        ...connectorIdentity(connector, externalId),
+        enabled
+      })
     });
 
     if (res.ok) {
@@ -61,9 +105,13 @@ export default function JourneysPage() {
         <h1>{isAr ? "الرحلات" : "Journeys"}</h1>
         <p>
           {isAr
-            ? "تحكم في كل رحلة: تشغيل/إيقاف، قنوات التنفيذ، وقياس التحويل والإيراد."
-            : "Control every lifecycle journey: on/off state, channels, conversion, and revenue impact."}
+            ? "تحكم في كل رحلة: تشغيل/إيقاف، القنوات، وأثر التحويل والإيراد عبر سلة أو كلافيو."
+            : "Control every lifecycle journey: on/off state, channels, conversion, and revenue impact for Salla or Klaviyo."}
         </p>
+        <div className="row" style={{ marginTop: 10 }}>
+          <span className="pillTag">{`${dict.common.connector}: ${connector === "klaviyo" ? dict.common.klaviyo : dict.common.salla}`}</span>
+          <span className="pillTag">{`${connector === "klaviyo" ? dict.common.accountId : dict.common.storeId}: ${externalId}`}</span>
+        </div>
       </section>
 
       <section className="sectionCard">

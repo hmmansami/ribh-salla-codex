@@ -8,3 +8,8 @@ test-results
 .env.local
 .env.*.local
 .DS_Store
+
+.ai_orchestrator/runs
+
+__pycache__/
+*.pyc

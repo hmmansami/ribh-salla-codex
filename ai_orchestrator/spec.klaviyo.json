@@ -1,0 +1,38 @@
+{
+  "goal": "Add Klaviyo as a first-class connector in Ribh next to Salla, including install/auth entry points, sync path, launch engine channel usage where relevant, and tests that verify Klaviyo-specific behavior without breaking existing Salla flows.",
+  "constraints": [
+    "Do not remove or regress existing Salla routes and services.",
+    "Follow existing adapter/service architecture patterns in src/features and src/lib/providers.",
+    "Keep API contracts explicit with zod schemas where route inputs change.",
+    "Preserve bilingual UI behavior and existing app navigation patterns."
+  ],
+  "acceptance_criteria": [
+    "Klaviyo connector services exist with clear integration boundaries and can run in demo mode when credentials are missing.",
+    "API routes expose Klaviyo install/auth and sync hooks parallel to existing connector patterns.",
+    "Core launch or journey logic can operate with Klaviyo connector context without breaking Salla-first defaults.",
+    "Unit tests cover Klaviyo integration logic and existing test suite still passes."
+  ],
+  "check_commands": [
+    "npm run test",
+    "npm run lint"
+  ],
+  "model_backend": "codex-cli",
+  "model": "gpt-5.3-codex",
+  "api_base_url": "https://api.openai.com/v1",
+  "max_slices": 6,
+  "max_attempts_per_slice": 3,
+  "max_files_per_slice": 10,
+  "command_timeout_seconds": 1500,
+  "working_directory": ".",
+  "context_files": [
+    "README.md",
+    "src/features/salla/service.ts",
+    "src/features/salla/oauth.ts",
+    "src/features/salla/sync.ts",
+    "src/lib/schemas/api.ts",
+    "src/lib/types/domain.ts"
+  ],
+  "planner_notes": "Model the Klaviyo connector structure consistently with existing feature modules and avoid broad rewrites.",
+  "implementer_notes": "Prefer additive changes. Keep code and naming clean. Add focused tests for new behavior.",
+  "reviewer_notes": "Reject slices that add placeholder-only Klaviyo code with no executable path or no tests."
+}
