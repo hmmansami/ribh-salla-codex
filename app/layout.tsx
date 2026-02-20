@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
 import { LocaleProvider } from "@/components/locale-provider";
+import { AppShell } from "@/components/app-shell";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,11 +8,17 @@ export const metadata: Metadata = {
   description: "One-click growth platform for Salla stores with AI marketing automation"
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="ar" dir="rtl">
-      <body>
-        <LocaleProvider>{children}</LocaleProvider>
+    <html lang="en">
+      <body className="bg-[#080c14] text-slate-100 antialiased">
+        <LocaleProvider>
+          <AppShell>{children}</AppShell>
+        </LocaleProvider>
       </body>
     </html>
   );

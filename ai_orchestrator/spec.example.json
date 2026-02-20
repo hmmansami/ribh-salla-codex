@@ -1,0 +1,30 @@
+{
+  "goal": "Build a high-fidelity support AI assistant for the current product with grounded answers, safe fallback behavior, and measurable quality gates.",
+  "constraints": [
+    "Keep existing architecture unless a change is required by acceptance criteria.",
+    "Do not break existing user-facing routes and APIs.",
+    "Prefer incremental migrations instead of large rewrites."
+  ],
+  "acceptance_criteria": [
+    "Assistant answers must be grounded in explicit sources and show fallback when uncertain.",
+    "Critical user flows must stay functional.",
+    "Automated checks must pass after each implementation slice."
+  ],
+  "check_commands": [
+    "npm run lint",
+    "npm run test"
+  ],
+  "model": "gpt-4.1",
+  "api_base_url": "https://api.openai.com/v1",
+  "max_slices": 6,
+  "max_attempts_per_slice": 3,
+  "max_files_per_slice": 8,
+  "command_timeout_seconds": 1200,
+  "working_directory": ".",
+  "context_files": [
+    "ai_orchestrator/README.md"
+  ],
+  "planner_notes": "Prioritize system reliability and testability before adding UI polish.",
+  "implementer_notes": "Keep code changes readable. Include minimal comments only where logic is non-obvious.",
+  "reviewer_notes": "Block slices with obvious regressions, missing tests, or vague acceptance coverage."
+}
