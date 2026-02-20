@@ -19,6 +19,15 @@ export const en = {
     arabic: "Arabic",
     english: "English",
     loading: "Loading...",
-    storeId: "Store ID"
+    storeId: "Store ID",
+    accountId: "Account ID",
+    connector: "Connector",
+    salla: "Salla",
+    klaviyo: "Klaviyo",
+    demoMode: "Demo mode",
+    liveMode: "Live mode",
+    benchmark: "Benchmark",
+    pass: "Pass",
+    fail: "Fail"
   }
 } as const;

@@ -19,6 +19,15 @@ export const ar = {
     arabic: "العربية",
     english: "الإنجليزية",
     loading: "جاري التحميل...",
-    storeId: "معرف المتجر"
+    storeId: "معرف المتجر",
+    accountId: "معرف الحساب",
+    connector: "الموصل",
+    salla: "سلة",
+    klaviyo: "كلافيو",
+    demoMode: "وضع العرض",
+    liveMode: "وضع حي",
+    benchmark: "المقارنة المعيارية",
+    pass: "نجاح",
+    fail: "فشل"
   }
 } as const;

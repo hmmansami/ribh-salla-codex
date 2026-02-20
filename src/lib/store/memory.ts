@@ -2,6 +2,8 @@ import type {
   BillingStatus,
   ConsentRecord,
   Journey,
+  KlaviyoAccount,
+  KlaviyoTokenSet,
   SallaStore,
   SallaTokenSet,
   WebhookEvent
@@ -14,8 +16,16 @@ type StoreRecord = {
   lastSyncCheckpoint?: string;
 };
 
+type KlaviyoRecord = {
+  account: KlaviyoAccount;
+  tokens?: KlaviyoTokenSet;
+  billing: BillingStatus;
+  lastSyncCheckpoint?: string;
+};
+
 type MemoryDB = {
   stores: Map<string, StoreRecord>;
+  klaviyoAccounts: Map<string, KlaviyoRecord>;
   journeys: Map<string, Journey[]>;
   consent: Map<string, ConsentRecord[]>;
   webhooks: Map<string, WebhookEvent>;
@@ -30,6 +40,7 @@ declare global {
 function createMemoryDb(): MemoryDB {
   return {
     stores: new Map(),
+    klaviyoAccounts: new Map(),
     journeys: new Map(),
     consent: new Map(),
     webhooks: new Map(),

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { toggleJourney } from "@/features/journeys/service";
+import { resolveConnectorContext } from "@/lib/connectors/context";
 import { toggleJourneySchema } from "@/lib/schemas/api";
 
 export async function POST(
@@ -14,8 +15,10 @@ export async function POST(
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
+  const context = resolveConnectorContext(parsed.data);
   const updated = toggleJourney({
-    storeId: parsed.data.storeId,
+    connector: context.connector,
+    storeId: context.externalId,
     journeyId: id,
     enabled: parsed.data.enabled
   });
